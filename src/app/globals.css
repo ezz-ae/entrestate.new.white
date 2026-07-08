@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 180 20% 98%; /* Light Teal */
+    --foreground: 180 25% 15%; /* Deep Teal for text */
+
+    --card: 180 20% 98%;
+    --card-foreground: 180 25% 15%;
+ 
+    --popover: 180 20% 98%;
+    --popover-foreground: 180 25% 15%;
+ 
+    --primary: 180 40% 30%; /* Deep Teal for primary actions */
+    --primary-foreground: 180 20% 98%;
+ 
+    --secondary: 180 15% 94%;
+    --secondary-foreground: 180 25% 15%;
+ 
+    --muted: 180 15% 94%;
+    --muted-foreground: 180 20% 40%;
+ 
+    --accent: 25 95% 53%; /* Burnt Orange for accents */
+    --accent-foreground: 25 10% 98%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 180 20% 85%;
+    --input: 180 20% 85%;
+    --ring: 180 40% 30%;
+ 
+    --radius: 0.75rem;
+  }
+ 
+  .dark {
+    --background: 180 25% 10%; /* Deep Teal for dark background */
+    --foreground: 180 15% 96%;
+
+    --card: 180 25% 12%;
+    --card-foreground: 180 15% 96%;
+ 
+    --popover: 180 25% 10%;
+    --popover-foreground: 180 15% 96%;
+ 
+    --primary: 180 30% 80%; /* Light Teal for primary actions in dark mode */
+    --primary-foreground: 180 25% 10%;
+ 
+    --secondary: 180 20% 15%;
+    --secondary-foreground: 180 15% 96%;
+ 
+    --muted: 180 20% 15%;
+    --muted-foreground: 180 15% 70%;
+ 
+    --accent: 25 90% 60%; /* Brighter Burnt Orange for accents in dark mode */
+    --accent-foreground: 180 25% 10%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 180 20% 20%;
+    --input: 180 20% 20%;
+    --ring: 180 30% 80%;
+  }
+
+  .theme-pinkpurple {
+    --background: 270 20% 98%;
+    --foreground: 270 25% 15%;
+    --card: 270 20% 98%;
+    --card-foreground: 270 25% 15%;
+    --popover: 270 20% 98%;
+    --popover-foreground: 270 25% 15%;
+    --primary: 330 80% 55%; /* Hot Pink */
+    --primary-foreground: 330 20% 98%;
+    --secondary: 270 15% 94%;
+    --secondary-foreground: 270 25% 15%;
+    --muted: 270 15% 94%;
+    --muted-foreground: 270 20% 40%;
+    --accent: 270 90% 60%; /* Bright Purple */
+    --accent-foreground: 270 10% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 270 20% 85%;
+    --input: 270 20% 85%;
+    --ring: 330 80% 55%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom gradient for headings */
+.gradient-heading {
+  @apply bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text;
+}
+
+/* Custom animation for gradient pulse */
+@keyframes gradient-pulse {
+  0%, 100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-gradient-pulse {
+  animation: gradient-pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
