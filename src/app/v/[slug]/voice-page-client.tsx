@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { kloomVoiceEnabled, kloomSpeak, stopKloomSpeaking } from '@/lib/kloom-voice';
 import type { VoicePage } from '@/types';
 
 type Msg = { role: 'agent' | 'buyer'; text: string };
@@ -132,12 +133,12 @@ export default function VoicePageClient({ page }: { page: VoicePage }) {
       utterRef.current = null;
     }
     window.speechSynthesis?.cancel();
+    stopKloomSpeaking();
   }, []);
 
-  const speak = useCallback(
+  const browserSpeak = useCallback(
     (text: string, onDone?: () => void) => {
       if (!window.speechSynthesis) return onDone?.();
-      stopSpeaking();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = locale === 'ar' ? 'ar-SA' : 'en-US';
       const voice = (window.speechSynthesis.getVoices() || []).find((v) =>
@@ -155,7 +156,23 @@ export default function VoicePageClient({ page }: { page: VoicePage }) {
       utterRef.current = utter;
       window.speechSynthesis.speak(utter);
     },
-    [locale, stopSpeaking],
+    [locale],
+  );
+
+  const speak = useCallback(
+    (text: string, onDone?: () => void) => {
+      stopSpeaking();
+      // Prefer kloom's ElevenLabs (Arabic-tuned) voice; fall back to the
+      // browser synth if it's disabled or the request fails.
+      if (kloomVoiceEnabled()) {
+        void kloomSpeak(text, locale, onDone).then((ok) => {
+          if (!ok) browserSpeak(text, onDone);
+        });
+        return;
+      }
+      browserSpeak(text, onDone);
+    },
+    [locale, stopSpeaking, browserSpeak],
   );
 
   const startListening = useCallback(() => {
