@@ -2,9 +2,27 @@
 // Server-side only Firebase Admin singletons. Deliberately NOT a 'use server'
 // module: that directive is for Server Actions and forbids object exports.
 
-import { getApps, initializeApp, applicationDefault, App } from 'firebase-admin/app';
+import { getApps, initializeApp, applicationDefault, cert, App } from 'firebase-admin/app';
 import { getAuth, Auth } from 'firebase-admin/auth';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
+
+// Off-GCP hosts (e.g. Vercel) have no ambient service account. Provide the
+// service-account JSON in an env var and it's used automatically; on
+// GCP/Firebase App Hosting leave it unset and the ambient SA is used.
+function resolveCredential() {
+  const raw =
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY ||
+    process.env.GOOGLE_SERVICE_ACCOUNT_KEY ||
+    process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+  if (raw) {
+    try {
+      return cert(JSON.parse(raw));
+    } catch {
+      // Fall through to applicationDefault if the JSON is malformed.
+    }
+  }
+  return applicationDefault();
+}
 
 // Resolve the project id explicitly so Firestore/Auth never fail with
 // "Unable to detect a Project Id in the current environment" — which happens
@@ -18,9 +36,7 @@ const projectId =
 let app: App;
 if (!getApps().length) {
   app = initializeApp({
-    // On GCP/Firebase this picks up the ambient service account. Locally,
-    // point GOOGLE_APPLICATION_CREDENTIALS at a service-account JSON.
-    credential: applicationDefault(),
+    credential: resolveCredential(),
     projectId,
   });
 } else {
