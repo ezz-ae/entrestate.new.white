@@ -3,21 +3,20 @@
 
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import { enableFirebaseTelemetry } from '@genkit-ai/firebase'; // Corrected import for telemetry
-import { adminApp } from '@/lib/firebaseAdmin';
 
-// (Optional) enable Genkit → Firebase telemetry
-enableFirebaseTelemetry();
+// Firebase telemetry (@genkit-ai/firebase) is intentionally NOT enabled here:
+// it pulls in the OpenTelemetry/winston instrumentation chain, which fails to
+// bundle cleanly on some hosts (Module not found: @opentelemetry/winston-transport)
+// and adds build weight for no functional benefit. Re-add it behind an env flag
+// only if you actually need Genkit → Firebase tracing.
 
 export const ai = genkit({
   plugins: [
     googleAI({
       apiVersion: 'v1',
     }),
-    // Removed: firebase({ app: adminApp }) - as it no longer exists in this package version
   ],
-  // Default model for every definePrompt/generate that doesn't set one.
-  // Without this, ~29 flows whose prompts omit `model` throw "Must supply a
-  // model" at runtime (they compile fine), which is why so many tools errored.
+  // Default model for every definePrompt/generate that doesn't set one, so no
+  // flow can throw "Must supply a model" at runtime.
   model: googleAI.model('gemini-2.5-flash'),
 });

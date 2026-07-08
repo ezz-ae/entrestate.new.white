@@ -6,11 +6,22 @@ import { getApps, initializeApp, applicationDefault, App } from 'firebase-admin/
 import { getAuth, Auth } from 'firebase-admin/auth';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 
+// Resolve the project id explicitly so Firestore/Auth never fail with
+// "Unable to detect a Project Id in the current environment" — which happens
+// during a build (e.g. on Vercel) where no ambient GCP project is present.
+const projectId =
+  process.env.GOOGLE_CLOUD_PROJECT ||
+  process.env.GCLOUD_PROJECT ||
+  process.env.FIREBASE_PROJECT_ID ||
+  'thinking-prism-495619-u8';
+
 let app: App;
 if (!getApps().length) {
   app = initializeApp({
-    // On GCP this picks up the ambient SA. Locally you can also use cert(...) via env JSON.
+    // On GCP/Firebase this picks up the ambient service account. Locally,
+    // point GOOGLE_APPLICATION_CREDENTIALS at a service-account JSON.
     credential: applicationDefault(),
+    projectId,
   });
 } else {
   app = getApps()[0]!;
