@@ -1,0 +1,27 @@
+# Firebase App Hosting config for the Entrestate white-label OS (Next.js).
+# https://firebase.google.com/docs/app-hosting/configure
+#
+# Server code uses Firebase Admin via applicationDefault(), so the backend runs
+# as the project's ambient service account — no key file is needed.
+
+runConfig:
+  maxInstances: 2
+  minInstances: 0
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+  timeoutSeconds: 120
+
+env:
+  # Gemini key for all AI flows. Create the secret once, then it is injected:
+  #   firebase apphosting:secrets:set GEMINI_API_KEY
+  - variable: GEMINI_API_KEY
+    secret: GEMINI_API_KEY
+    availability:
+      - RUNTIME
+
+  # Optional: mark the primary host so middleware treats it as an app host
+  # (not a connected customer domain). Set to your live domain when ready.
+  # - variable: NEXT_PUBLIC_PRIMARY_HOST
+  #   value: entrestate.com
+  #   availability: [BUILD, RUNTIME]

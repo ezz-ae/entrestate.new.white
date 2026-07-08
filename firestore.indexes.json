@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "voicePages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "brandSlug", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
